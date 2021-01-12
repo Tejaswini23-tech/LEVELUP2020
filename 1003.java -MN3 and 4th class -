@@ -1,0 +1,336 @@
+import java.util.*;
+import java.io.*;
+
+public class resursionclass3rd {
+
+    public static void main(String[] args) throws Exception {
+        Scanner scn = new Scanner(System.in);
+        int n = scn.nextInt();// row
+        int m = scn.nextInt(); // col
+       printMazePaths( 0 , 0 , n - 1 , m - 1 , "" );        
+}
+
+// sr - source row
+// sc - source column
+// dr - destination row
+// dc - destination column
+//  Print Maze Paths  hvhhvvh
+public static int printMazePaths(int sr, int sc, int dr, int dc, String psf) {
+   if( sr > dr || sc > dc){
+       return;
+   }
+   if( sr == dr && sc == dc){
+       System.out.println(psf);
+       return 1;
+   }
+ int count = 0;
+ // horizantal
+   count += printMazePaths( sr , sc + 1 , dr , dc , psf + 'h');
+   // vertical
+   count += printMazePaths( sr + 1 , sc , dr , dc , psf + 'v');
+   // diagonal
+   count += printMazePaths( sr + 1 , sc + 1 , dr , dc , psf + 'd');
+  return count;
+
+}
+// stopping call before wrong call if  codintion before each call
+public static int printMazePathsusingifcondition(int sr, int sc, int dr, int dc, String psf) {
+   
+    if( sr == dr && sc == dc){
+        System.out.println(psf);
+        return 1;
+    }
+  int count = 0;
+  // horizantal
+  if( sc  + 1 <= dc)count += printMazePathsusingifcondition( sr , sc + 1 , dr , dc , psf + 'h');
+    // vertical
+   if( sr  +  1 <= dr) count += printMazePathsusingifcondition( sr + 1 , sc , dr , dc , psf + 'v');
+    // diagonal
+    if( sr  +  1 <= dr && sc + 1 <= dc)  count += printMazePathsusingifcondition( sr + 1 , sc + 1 , dr , dc , psf + 'd');
+   return count;
+ 
+ }
+
+// Print Maze Paths With Jumps - output - h1v1h2h4
+public static int printMazePathswithinfinitejumps(int sr, int sc, int dr, int dc, String psf) {
+   // NO NEED FOR THIS CALL FOR LOOP CHECKING THIS CONDITION
+    if( sr > dr || sc > dc ){
+        return;
+    }
+    if( sr == dr && sc == dc){
+        System.out.println(psf);
+        return 1;
+    }
+    int count = 0;
+    for( int i = 1 ; sc +  i <= dc ;i++  ){
+     count += printMazePaths( sr , sc + i , dr , dc , psf + "h" + i);
+    }
+     for( int i = 1 ; sr +  i <= dr ;i++  ){
+        count +=  printMazePaths( sr + i , sc , dr , dc , psf + "v" + i);
+    }
+    
+  for( int i = 1 ; sc +  i <= dc &&  sr +  i <= dr ; i++){
+    count +=   printMazePaths( sr + i , sc + i , dr , dc , psf + "d" + i);
+  }
+    
+  return count;
+}
+// stopping call before wrong call if  codintion before each call
+public static int printMazePathsMultiJumps(int sr, int sc, int dr, int dc, String psf) {
+    if (sr == dr && sc == dc) {
+        System.out.println(psf);
+        return 1;
+    }
+
+    int count = 0;
+    for (int j = 1; sc + j <= dc; j++)
+        count += printMazePathsMultiJumps(sr, sc + j, dr, dc, psf + "h" + j);
+    for (int j = 1; sr + j <= dr && sc + j <= dc; j++)
+        count += printMazePathsMultiJumps(sr + j, sc + j, dr, dc, psf + "d" + j);
+    for (int j = 1; sr + j <= dr; j++)
+        count += printMazePathsMultiJumps(sr + j, sc, dr, dc, psf + "v" + j);
+
+    return count;
+}
+//  FOR 8 DIRECTIONS MAZE PATH
+public static int floodfill(int[][] maze, int row, int col, int dr , int dc  String psf, boolean[][] visited) {
+    if (row < 0 || col < 0 || row >= dr + 1 || col >= dc + 1 ||
+        || visited[row][col] == true) {
+        return 0;
+    } else if (row == dr && col == dc) {
+        System.out.println(psf);
+        return 1;
+    }
+     int count = 0;
+    visited[row][col] = true;
+
+    count += floodfill(maze, row - 1, col, psf + "u", visited);
+    count +=  floodfill(maze, row, col - 1, psf + "l", visited);
+    for (int j = 1; sr + j <= dr && sc + j <= dc; j++) count +=  floodfill(maze, row + j, col, psf + "d"+ j,  visited);
+    for (int j = 1; sc + j <= dc; j++) count +=  floodfill(maze, row, col + j, psf + "r" + j , visited);
+    count += floodfill(maze, row - 1, col + 1, psf + "e", visited);
+    for (int j = 1; sr + j <= dr && sc + j <= dc; j++) count += floodfill(maze, row + j, col, + j,  psf + "s" + j, visited);
+    count += floodfill(maze, row + 1, col - 1, psf + "w", visited);
+    count += floodfill(maze, row - 1, col - 1, psf + "n", visited);
+    visited[row][col] = false;
+}
+// ALL MAZE PATH OPTIMIZE USING FOR LOOP , VISITED , DIRECTION 2D ARRAY FOR ALL DIRECTION 
+//AND 1D STRING ARRAY FOR {N,S,E,L,R,W} DIRECTION
+// destination can be any index of matrix
+                            ( 0 , 0 , n - 1 , m - 1 , directions, dirs, visited , "")
+ public static int dir[][]  = { {1, 0 } , { -1 , 0} , { 0 , 1} , { 0 , -1} , { 1,1} , {-1 ,- 1} , { -1 , 1} , { 1 , - 1} };
+public static String dirS[] = { "R" , "L" , " U" , "D" , " E" , "W " , " N" , "S"};
+public static int floodFill(int sr, int sc, int er, int ec, boolean[][] vis, int[][] dir, String[] dirS,String ans) {
+if (sr == er && sc == ec) {
+System.out.println(ans);
+return 1;
+}
+
+int n = vis.length; // no of rows
+int m = vis[0].length; // no of col
+
+vis[sr][sc] = true; // mark
+
+int count = 0;
+for (int d = 0; d < dir.length; d++) { // call for all unvisited nbr's
+int r = sr + dir[d][0];
+int c = sc + dir[d][1];
+
+if (r >= 0 && c >= 0 && r < n && c < m && !vis[r][c])
+    count += floodFill(r, c, er, ec, vis, dir, dirS, ans + dirS[d]);
+}
+
+vis[sr][sc] = false;
+
+return count;
+}
+// FLOOD FILL JUMPS HERE THE BOUNDARY CONTION WILL IT CAN'T JUMP OF BOUNDARY OF ROW AND CALL 
+
+public static int floodFillJump(int sr, int sc, int er, int ec, boolean[][] vis, int[][] dir, String[] dirS,
+            String ans) {
+        if (sr == er && sc == ec) {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int n = vis.length; // no of rows
+        int m = vis[0].length; // no of col
+
+        vis[sr][sc] = true; // mark
+
+        int count = 0;
+        for (int d = 0; d < dir.length; d++) { // call for all unvisited nbr's
+            for (int rad = 1; rad <= Math.max(n, m); rad++) { // maximum no col and row we can take jump in that direction
+                int r = sr + rad * dir[d][0]; // moves ,  1, 2, 3 <= n - 1 or m - 1 multiplying with radius to reach that direction
+                int c = sc + rad * dir[d][1];
+
+                if (r >= 0 && c >= 0 && r < n && c < m) {
+                    if (!vis[r][c])
+                        count += floodFillJump(r, c, er, ec, vis, dir, dirS, ans + dirS[d] + rad);
+                } else
+                    break;
+            }
+        }
+
+        vis[sr][sc] = false;
+
+        return count;
+    }
+
+// longest and shortest path and distance in maze with 4 direction using global and static variable;
+// longest case
+public static int longestpath = 0;
+public static String longeststring = " ";
+
+public static int longestpathwithdistance(int sr, int sc, int er, int ec, boolean[][] vis, int[][] dir, String[] dirS, int psf ,String ans) {
+    if (sr == er && sc == ec) {
+     if( psf > longestpath  ){
+        longestpath = psf; // print path and string
+        longeststring = ans;
+        return 1;
+     }
+   
+    return 1;
+    }
+    
+    int n = vis.length; // no of rows
+    int m = vis[0].length; // no of col
+    
+    vis[sr][sc] = true; // mark
+    
+    int count = 0;
+    for (int d = 0; d < dir.length; d++) { // call for all unvisited nbr's
+    int r = sr + dir[d][0];
+    int c = sc + dir[d][1];
+    
+    if (r >= 0 && c >= 0 && r < n && c < m && !vis[r][c])
+        count += longestpathwithdistance(r, c, er, ec, vis, dir, dirS, psf + 1 ,  ans + dirS[d]);
+    }
+    
+    vis[sr][sc] = false;
+    
+    return count;
+    }
+    // shortest case using global and static variables
+    public static int shortestpath = (int)1e9;
+    public static String shorteststring = " ";
+    
+    public static int shortestpathwithdistance(int sr, int sc, int er, int ec, boolean[][] vis, int[][] dir, String[] dirS, int psf ,String ans) {
+        if (sr == er && sc == ec) {
+         if( psf < longestpath  ){
+            shortestpath  = psf; // print path and string
+            shorteststring  = ans;
+            return 1;
+         }
+       
+        return 1;
+        }
+        
+        int n = vis.length; // no of rows
+        int m = vis[0].length; // no of col
+        
+        vis[sr][sc] = true; // mark
+        
+        int count = 0;
+        for (int d = 0; d < dir.length; d++) { // call for all unvisited nbr's
+        int r = sr + dir[d][0];
+        int c = sc + dir[d][1];
+        
+        if (r >= 0 && c >= 0 && r < n && c < m && !vis[r][c])
+            count += shortestpathwithdistance(r, c, er, ec, vis, dir, dirS, psf + 1 ,  ans + dirS[d]);
+        }
+        
+        vis[sr][sc] = false;
+        
+        return count;
+        }
+
+        // longest  and shortest path and distance without using global and static variables 
+        // we are using here pair class to store and update value
+        // longest case using pair class
+   public static Class Pair{
+    int longpath = 0;
+     String longstring = " ";
+     public  Pair( int longpath ,  String longstring){
+         this.longpath = longpath;
+        this.longstring = longstring;
+}
+   }
+public static Pair longestpathudingPair( int sr , int sc , int  dr , int dc , int[][] vis , int[][] dir , int[] dirS ){
+    if( sr == dr && sc == dc){
+        Pair p = new Pair(0 , "");
+        return p;
+    }
+        int m = vis.length;
+        int n = vis[0].length;
+        Pair myans = new Pair(-1 , "");
+         vis[sr][sc] = true;
+         for( int d = 0 ; d < dir.length ; d++){
+             int r = sr + dir[d][0];
+             int c = sc + dir[d][1];
+             if( r >= 0 && c >= 0 && r  <= dr && c <= dc && !vis[r][c]){
+                 Pair mp = longestpathudingPair( r , c , dr , dc , vis , dir , dirS){
+                    if( mp.longpath >= 0 && mp.longpath + 1 > myans.longpath  ){
+                    myans.longpath = mp.longpath + 1;
+                    myans.longstring = mp.longstring + dirS[d];
+                 }
+
+             }
+
+         }
+         vis[sr][sc] = false;
+
+  return myans;
+   }
+   // shortest using pair class
+   public static Class Pair{
+    int shortpath = 0;
+     String shortstring = " ";
+     public  Pair( int shortpath ,  String shortstring){
+         this.shortpath = shortpath;
+        this.shortstring = shortstring;
+}
+   }
+public static Pair shortestpathudingPair( int sr , int sc , int  dr , int dc , int[][] vis , int[][] dir , int[] dirS ){
+    if( sr == dr && sc == dc){
+        Pair p = new Pair(0 , "");
+        return p;
+    }
+        int m = vis.length;
+        int n = vis[0].length;
+        Pair myans = new Pair( (int)1e9 , "");
+         vis[sr][sc] = true;
+         for( int d = 0 ; d < dir.length ; d++){
+             int r = sr + dir[d][0];
+             int c = sc + dir[d][1];
+             if( r >= 0 && c >= 0 && r  <= dr && c <= dc && !vis[r][c]){
+                 Pair mp = shortestpathudingPair( r , c , dr , dc , vis , dir , dirS){
+                    if( mp.shortpath >= 0 && mp.shortpath + 1  < myans.shortpath  ){
+                    myans.shortpath = mp.shortpath + 1;
+                    myans.shortstring = mp.shortstring + dirS[d];
+                 }
+
+             }
+
+         }
+         vis[sr][sc] = false;
+
+  return myans;
+   }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
